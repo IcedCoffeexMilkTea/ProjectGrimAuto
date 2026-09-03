@@ -10,19 +10,19 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           
       - name: System Dependencies Installation
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk build-essential libffi-dev libssl-dev git zip unzip
           
-      - name: Install Buildozer and Kivy Dependencies
+      - name: Install Buildozer and Toolchain Requirements
         run: |
           pip install --upgrade pip
           pip install buildozer kivy Cython
           
-      - name: Generate Airtight Spec Configuration File
+      - name: Generate Verified Spec Configuration File
         run: |
           cat << 'EOF' > buildozer.spec
           [app]
@@ -42,10 +42,10 @@ jobs:
           android.skip_update = False
           android.logcat_filters = *:S python:D
           
-          # Force compatibility with Ubuntu Virtual Environment paths
-          android.api = 33
+          # Target up-to-date and authoritative Android SDK / NDK URL endpoints
+          android.api = 34
           android.minapi = 21
-          android.ndk = 25.2.9519653
+          android.ndk_api = 21
           
           [buildozer]
           log_level = 2
@@ -61,3 +61,4 @@ jobs:
         with:
           name: GrimAutoPackage
           path: bin/*.apk
+

@@ -13,7 +13,7 @@ jobs:
       - name: System Dependencies Installation
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk build-essential libffi-dev libssl-dev
+          sudo apt-get install -y openjdk-17-jdk build-essential libffi-dev libssl-dev android-sdk
       - name: Install Buildozer and Kivy
         run: |
           pip install --upgrade pip
@@ -23,8 +23,11 @@ jobs:
           buildozer init
           sed -i 's/# requirements = kivy/requirements = kivy/g' buildozer.spec
           sed -i 's/package.name = myapp/package.name = grimauto/g' buildozer.spec
+          sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
       - name: Automated Binary Build Campaign
-        run: buildozer android debug
+        run: |
+          export ANDROID_HOME=/usr/lib/android-sdk
+          buildozer android debug
       - name: Upload Finished APK Package Artifact
         uses: actions/upload-artifact@v4
         with:

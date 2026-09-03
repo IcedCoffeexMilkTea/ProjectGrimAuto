@@ -10,56 +10,24 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           
-      - name: System Dependencies Installation
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk build-essential libffi-dev libssl-dev git zip unzip ccache autoconf automake libtool
+      - name: Setup Flutter SDK Environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
           
-      - name: Install Toolchain and Explicit Dependency Versions
+      - name: Install Flet Compiler Platform
         run: |
           pip install --upgrade pip
-          pip install "setuptools<66" "Cython>=0.29.33,<3.0"
-          pip install buildozer kivy
+          pip install flet
           
-      - name: Generate Verified Spec Configuration File
+      - name: Native Package Building Campaign
         run: |
-          cat << 'EOF' > buildozer.spec
-          [app]
-          title = GrimAuto
-          package.name = grimauto
-          package.domain = org.icedcoffeemilktea
-          source.dir = .
-          source.include_exts = py,png,jpg,kv,atlas
-          version = 1.0.0
-          requirements = python3,kivy
-          orientation = portrait
-          osx.kivy_version = 2.3.0
-          fullscreen = 1
-          android.archs = arm64-v8a, armeabi-v7a
-          android.allow_backup = True
-          android.accept_sdk_license = True
-          android.skip_update = False
-          android.logcat_filters = *:S python:D
-          
-          # Stable Android SDK configurations for cloud virtual runners
-          android.api = 33
-          android.minapi = 21
-          android.ndk_api = 21
-          
-          [buildozer]
-          log_level = 2
-          warn_on_root = 1
-          EOF
-          
-      - name: Automated Binary Build Campaign
-        run: |
-          export APP_ANDROID_ACCEPT_SDK_LICENSE=1
-          buildozer android debug
+          flet build apk --project-name grimauto --org org.icedcoffeemilktea
           
       - name: Upload Finished APK Package Artifact
         uses: actions/upload-artifact@v4
         with:
           name: GrimAutoPackage
-          path: bin/*.apk
+          path: build/apk/*.apk

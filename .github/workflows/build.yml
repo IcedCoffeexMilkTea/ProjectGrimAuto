@@ -10,17 +10,17 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' # Downgraded to 3.10 for stable toolchain compatibility
+          python-version: '3.10'
           
       - name: System Dependencies Installation
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk build-essential libffi-dev libssl-dev git zip unzip cccl autoconf automake libtool
+          sudo apt-get install -y openjdk-17-jdk build-essential libffi-dev libssl-dev git zip unzip ccache autoconf automake libtool
           
       - name: Install Toolchain and Explicit Dependency Versions
         run: |
           pip install --upgrade pip
-          pip install "setuptools<66" "Cython>=0.29.33,<3.0" # Prevent Cython 3.x breaking changes
+          pip install "setuptools<66" "Cython>=0.29.33,<3.0"
           pip install buildozer kivy
           
       - name: Generate Verified Spec Configuration File
@@ -43,7 +43,7 @@ jobs:
           android.skip_update = False
           android.logcat_filters = *:S python:D
           
-          # Authoritative stable version parameters for Python-for-Android toolchain compatibility
+          # Stable Android SDK configurations for cloud virtual runners
           android.api = 33
           android.minapi = 21
           android.ndk_api = 21
